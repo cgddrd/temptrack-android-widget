@@ -1,21 +1,73 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#09C"
+    android:background="#ECEFF1"
     android:padding="@dimen/widget_margin">
 
-    <TextView
-        android:id="@+id/appwidget_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="8dp"
-        android:background="#09C"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
-        android:textColor="#ffffff"
-        android:textSize="24sp"
-        android:textStyle="bold|italic" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_height="wrap_content"
+            android:background="#33B5E5"
+            android:padding="10dp"
+            android:layout_width="0dp"
+            android:layout_weight="1.2">
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="0dp"
+                android:background="@drawable/clock_icon" />
+
+            <TextClock
+                android:layout_width="wrap_content"
+                android:layout_toRightOf="@+id/icon"
+                android:layout_height="100dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:textSize="26dp"
+                android:id="@+id/textClock" />
+
+        </RelativeLayout>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_height="wrap_content"
+            android:background="#33B5E5"
+            android:padding="10dp"
+            android:layout_marginLeft="-40dp"
+            android:layout_width="0dp"
+            android:layout_weight="0.8"
+            >
+
+            <ImageView
+                android:id="@+id/icon2"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:background="@drawable/thermometer_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="20\u00B0C"
+                android:textSize="26dp"
+                android:id="@+id/textView"
+                android:layout_toRightOf="@+id/icon2"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>
