@@ -1,20 +1,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#33B5E5"
-    android:padding="@dimen/widget_margin"
-    android:paddingTop="26dp">
+    android:background="#3F51B5"
+    android:padding="@dimen/widget_margin">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:fontFamily="sans-serif-light"
             android:text="20\u00B0"
-            android:textSize="80sp"
-            android:id="@+id/textViewTemp"
+            android:textSize="86sp"
+            android:id="@+id/textTemp"
             android:layout_gravity="center_vertical"
             android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
+            android:textColor="#E8EAF6"
             android:paddingTop="10dp"
             android:paddingStart="26dp"
             android:gravity="center"/>
@@ -23,27 +23,29 @@
             android:layout_height="wrap_content"
             android:paddingLeft="26dp"
             android:layout_width="match_parent"
-            android:layout_below="@+id/textViewTemp">
+            android:layout_below="@+id/textTemp">
 
             <ImageView
-                android:id="@+id/icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:id="@+id/imageTime"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
                 android:layout_marginLeft="0dp"
-                android:background="@drawable/clock_icon" />
+                android:tint="#FF80AB"
+                android:src="@drawable/clock_icon" />
 
             <TextClock
                 android:layout_width="wrap_content"
-                android:layout_toRightOf="@+id/icon"
+                android:layout_toRightOf="@+id/imageTime"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:layout_marginLeft="5dp"
+                android:textColor="#90FFFFFF"
                 android:layout_centerInParent="true"
                 android:textSize="16sp"
-                android:id="@+id/textClock" />
+                android:id="@+id/textTime" />
 
         </RelativeLayout>
 
@@ -51,9 +53,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_toRightOf="@+id/textViewTemp"
+        android:layout_toRightOf="@+id/textTemp"
         android:paddingLeft="26dp"
-        android:paddingTop="26dp">
+        android:id="@+id/statsContainer"
+        android:paddingTop="30dp">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_height="wrap_content"
@@ -62,23 +65,26 @@
             android:paddingBottom="5dp">
 
             <ImageView
-                android:id="@+id/icon2"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:id="@+id/imageMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
                 android:layout_marginLeft="0dp"
-                android:background="@drawable/max_icon" />
+                android:tint="#FF80AB"
+                android:src="@drawable/max_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="20\u00B0"
+                android:textColor="#90FFFFFF"
                 android:textSize="16sp"
-                android:id="@+id/textView2"
                 android:layout_gravity="center_vertical"
-                android:layout_toRightOf="@+id/icon2"
-                android:gravity="center"/>
+                android:layout_toRightOf="@+id/imageMax"
+                android:gravity="center"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/textMax"/>
 
 
         </RelativeLayout>
@@ -90,23 +96,26 @@
             android:paddingBottom="5dp">
 
             <ImageView
-                android:id="@+id/icon3"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:id="@+id/imageMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
                 android:layout_marginLeft="0dp"
-                android:background="@drawable/min_icon" />
+                android:tint="#FF80AB"
+                android:src="@drawable/min_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="20\u00B0"
+                android:textColor="#90FFFFFF"
                 android:textSize="16sp"
-                android:id="@+id/textView3"
                 android:layout_gravity="center_vertical"
-                android:layout_toRightOf="@+id/icon3"
-                android:gravity="center"/>
+                android:layout_toRightOf="@+id/imageMin"
+                android:gravity="center"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/textMin"/>
 
         </RelativeLayout>
 
@@ -117,28 +126,53 @@
             android:paddingBottom="5dp">
 
             <ImageView
-                android:id="@+id/icon3"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:id="@+id/imageAverage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
                 android:layout_marginLeft="0dp"
-                android:background="@drawable/min_icon" />
+                android:tint="#FF80AB"
+                android:src="@drawable/average_icon"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="20\u00B0"
                 android:textSize="16sp"
-                android:id="@+id/textView3"
+                android:textColor="#90FFFFFF"
                 android:layout_gravity="center_vertical"
-                android:layout_toRightOf="@+id/icon3"
-                android:gravity="center"/>
+                android:layout_toRightOf="@+id/imageAverage"
+                android:gravity="center"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/textViewAverage"/>
 
         </RelativeLayout>
 
 
     </LinearLayout>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:tint="#95FFFFFF"
+        android:src="@drawable/settings_icon"
+        android:background="@android:color/transparent"
+        android:padding="10dp"
+        android:id="@+id/btnSettings"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:tint="#95FFFFFF"
+        android:src="@drawable/refresh_icon"
+        android:background="@android:color/transparent"
+        android:padding="10dp"
+        android:id="@+id/btnRefresh"/>
 
         <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
             <!--android:layout_height="wrap_content"-->
