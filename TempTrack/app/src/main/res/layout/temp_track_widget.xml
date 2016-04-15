@@ -35,17 +35,17 @@
                 android:tint="#FF80AB"
                 android:src="@drawable/clock_icon" />
 
-            <TextClock
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_toRightOf="@+id/imageTime"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:text="13:43 PM"
+                android:textColor="#90FFFFFF"
+                android:textSize="16sp"
+                android:layout_gravity="center_vertical"
+                android:layout_toRightOf="@+id/imageTime"
                 android:gravity="center"
                 android:layout_marginLeft="5dp"
-                android:textColor="#90FFFFFF"
-                android:layout_centerInParent="true"
-                android:textSize="16sp"
-                android:id="@+id/textTime" />
+                android:id="@+id/textTime"/>
 
         </RelativeLayout>
 
@@ -173,144 +173,5 @@
         android:background="@android:color/transparent"
         android:padding="10dp"
         android:id="@+id/btnRefresh"/>
-
-        <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="#33B5E5"-->
-            <!--android:padding="10dp"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_weight="0.8"-->
-            <!--android:layout_marginLeft="-20dp"-->
-            <!-->-->
-
-            <!--<ImageView-->
-                <!--android:id="@+id/icon2"-->
-                <!--android:layout_width="50dp"-->
-                <!--android:layout_height="50dp"-->
-                <!--android:layout_alignParentLeft="true"-->
-                <!--android:layout_centerInParent="true"-->
-                <!--android:background="@drawable/thermometer_icon" />-->
-
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="100dp"-->
-                <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
-                <!--android:text="20\u00B0"-->
-                <!--android:textSize="26dp"-->
-                <!--android:id="@+id/textView"-->
-                <!--android:layout_toRightOf="@+id/icon2"-->
-                <!--android:layout_gravity="center_vertical"-->
-                <!--android:gravity="center"/>-->
-
-        <!--</RelativeLayout>-->
-
-    <!--<LinearLayout-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="80dp"-->
-        <!--android:weightSum="4"-->
-        <!--android:layout_below="@id/topLayout"-->
-        <!--android:layout_alignParentStart="true"-->
-        <!--android:divider="@drawable/mydivider"-->
-        <!--android:showDividers="middle"-->
-        <!--android:dividerPadding="0dp">-->
-
-        <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:layout_height="80dp"-->
-            <!--android:padding="10dp"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_weight="1"-->
-            <!--android:background="@android:color/transparent">-->
-
-            <!--<TextView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="20\u00B0C"-->
-                <!--android:textSize="20sp"-->
-                <!--android:id="@+id/textView4"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:textAlignment="center"-->
-                <!--android:layout_marginTop="5dp"-->
-                <!--android:textColor="@android:color/black"-->
-                <!--android:gravity="center"/>-->
-
-            <!--<ImageView-->
-                <!--android:id="@+id/icon6"-->
-                <!--android:layout_width="20dp"-->
-                <!--android:layout_height="20dp"-->
-                <!--android:layout_centerInParent="true"-->
-                <!--android:layout_marginTop="5dp"-->
-                <!--android:layout_below="@+id/textView4"-->
-                <!--android:background="@drawable/clock_icon" />-->
-
-        <!--</RelativeLayout>-->
-
-        <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:layout_height="80dp"-->
-            <!--android:padding="10dp"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_weight="1">-->
-
-            <!--<TextView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="20\u00B0C"-->
-                <!--android:textSize="20sp"-->
-                <!--android:id="@+id/textView3"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:textAlignment="center"-->
-                <!--android:layout_marginTop="5dp"-->
-                <!--android:textColor="@android:color/black"-->
-                <!--android:gravity="center"/>-->
-
-            <!--<ImageView-->
-                <!--android:id="@+id/icon5"-->
-                <!--android:layout_width="20dp"-->
-                <!--android:layout_height="20dp"-->
-                <!--android:layout_centerInParent="true"-->
-                <!--android:layout_marginTop="5dp"-->
-                <!--android:layout_below="@+id/textView3"-->
-                <!--android:background="@drawable/clock_icon" />-->
-
-        <!--</RelativeLayout>-->
-
-        <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:layout_height="80dp"-->
-            <!--android:padding="10dp"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_weight="1">-->
-
-            <!--<ImageButton-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_centerVertical="true"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:src="@drawable/refresh_icon"-->
-                <!--android:background="@android:color/transparent"-->
-                <!--android:padding="0dp"/>-->
-
-        <!--</RelativeLayout>-->
-
-        <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:layout_height="80dp"-->
-            <!--android:padding="10dp"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_weight="1">-->
-
-            <!--<ImageButton-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_centerVertical="true"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:src="@drawable/settings_icon"-->
-                <!--android:background="@android:color/transparent"-->
-                <!--android:padding="0dp"/>-->
-
-        <!--</RelativeLayout>-->
-
-    <!--</LinearLayout>-->
-
 
 </RelativeLayout>
