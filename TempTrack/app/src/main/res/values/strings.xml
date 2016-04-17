@@ -1,5 +1,22 @@
 <resources>
     <string name="app_name">TempTrack</string>
-    <string name="appwidget_text">EXAMPLE</string>
+    <string name="config_title">General</string>
+    <string name="config_txtSpin_text">Data Feed:</string>
+    <string name="config_btnDone_text">Done</string>
     <string name="add_widget">Add widget</string>
+    <string name="title_activity_temp_track_config">TempTrackConfigActivity</string>
+
+    <string name="widget_no_connection_message">Unable to access data. Please check your network connection.</string>
+
+    <string name="dataFeedDefault">http://users.aber.ac.uk/aos/CSM22/temp1data.php</string>
+
+    <string-array name="dataFeedOpts">
+        <item>Feed 1 (Temp1.xml)</item>
+        <item>Feed 2 (Temp2.xml)</item>
+    </string-array>
+
+    <string-array name="dataFeedOptsValues">
+        <item>http://users.aber.ac.uk/aos/CSM22/temp1data.php</item>
+        <item>http://users.aber.ac.uk/aos/CSM22/temp2data.php</item>
+    </string-array>
 </resources>

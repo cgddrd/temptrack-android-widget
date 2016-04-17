@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/config_title"
+        android:key="pref_key_storage_settings">
+
+        <ListPreference
+            android:title="Data Feed"
+            android:summary="Select the feed URL to obtain data from."
+            android:key="dataFeed"
+            android:entries="@array/dataFeedOpts"
+            android:entryValues="@array/dataFeedOptsValues"
+            android:defaultValue="@string/dataFeedDefault" />
+
+        <CheckBoxPreference
+            android:key="wifiOnly"
+            android:title="WiFi Only"
+            android:summary="Select to restrict network access to only allow WiFi connections."
+            android:defaultValue="false"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -15,13 +15,21 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="uk.ac.aber.clg11.temptrack.REFRESH_BUTTON" />
-
+                <action android:name="uk.ac.aber.clg11.temptrack.SETTINGS_BUTTON" />
+                <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/temp_track_widget_info" />
         </receiver>
+
+        <activity android:label="@string/config_title" android:name=".TempTrackConfigActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
