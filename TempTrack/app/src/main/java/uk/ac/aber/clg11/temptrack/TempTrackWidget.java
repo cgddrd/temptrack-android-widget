@@ -48,7 +48,9 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
     private static boolean isCellularAllowed = true;
 
-    private TemperatureFeedData widgetFeedData = null;
+    private static boolean isDisplayCelsius = true;
+
+    private static TemperatureFeedData widgetFeedData = null;
 
     // The BroadcastReceiver that tracks network connectivity changes.
     private NetworkReceiver receiver = new NetworkReceiver();
@@ -114,7 +116,14 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
         } else if (SETTINGS_BUTTON.equals(intent.getAction())) {
 
+            // CG - We use the 'widgetId' to distinguish click events between multiple instances of the same widget.
+            // See: http://stackoverflow.com/a/11716757/4768230 for more information.
+            Bundle extras = intent.getExtras();
+
+            int widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+
             Intent settingsIntent = new Intent(context, TempTrackConfigActivity.class);
+            settingsIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
             settingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(settingsIntent);
 
@@ -128,9 +137,19 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
             Log.d(TAG, String.valueOf(isCellularConnected));
             Log.d(TAG, String.valueOf(isWifiConnected));
 
+            // CG - We use the 'widgetId' to distinguish click events between multiple instances of the same widget.
+            // See: http://stackoverflow.com/a/11716757/4768230 for more information.
+            Bundle extras = intent.getExtras();
+
+            int widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+
+            updateWidgetUI(context, widgetId);
+
         } else if (NETWORK_CHANGE.equals(intent.getAction())) {
 
-            Log.d(TAG, "NETWORK CHANGE");
+            Log.d(TAG, "NETWORK CHANGE WIDGET");
+
+            updateNetworkStatusFlags(context);
 
         } else {
 
@@ -192,7 +211,18 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
         URL = sharedPref.getString("dataFeed", context.getString(R.string.dataFeedDefault));
 
-        Log.d(TAG, URL);
+        // Force the default temperature scale to be in celsius in the unlikely event that we have no preference at all (including a default).
+        isDisplayCelsius = sharedPref.getString("dataTempScale", "celsius").equalsIgnoreCase("celsius");
+
+    }
+
+    private SpannableStringBuilder formatTempText(double temperatureValue) {
+
+        // CG - We force the String value for the temp to be set to one decimal place for display consistency.
+        // CG - To ensure correct rendering across different devices and users, we force the locale to use the device default.
+        String temperatureString = String.format(Locale.getDefault(), "%.1f", temperatureValue);
+
+        return formatTempText(temperatureString);
 
     }
 
@@ -226,13 +256,17 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
         if (widgetFeedData != null) {
 
+            double currentTempCelsius = widgetFeedData.getLatestReading().getTemp();
+            double displayTemp = isDisplayCelsius ? currentTempCelsius : convertCelsiusToFahrenheit(currentTempCelsius);
+
             setDataStatus(true, context, widgetId);
 
             String minTemp = String.format(Locale.getDefault(), "%.1f", widgetFeedData.getMinTemperature());
             String maxTemp = String.format(Locale.getDefault(), "%.1f", widgetFeedData.getMaxTemperature());
             String avgTemp = String.format(Locale.getDefault(), "%.1f", widgetFeedData.getHourlyAverageTemperature());
 
-            views.setTextViewText(R.id.textTemp, formatTempText(widgetFeedData.getLatestReading().getTempStringValue()));
+            views.setTextViewText(R.id.textTemp, formatTempText(displayTemp));
+
             views.setTextViewText(R.id.textMin, minTemp + "\u00B0");
             views.setTextViewText(R.id.textMax, maxTemp + "\u00B0");
             views.setTextViewText(R.id.textViewAverage, avgTemp + "\u00B0");
@@ -294,6 +328,10 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         manager.updateAppWidget(widgetId, views);
+    }
+
+    private double convertCelsiusToFahrenheit(double celsius) {
+        return (9.0/5.0) * celsius + 32;
     }
 
 }

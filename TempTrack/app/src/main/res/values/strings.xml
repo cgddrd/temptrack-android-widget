@@ -19,4 +19,12 @@
         <item>http://users.aber.ac.uk/aos/CSM22/temp1data.php</item>
         <item>http://users.aber.ac.uk/aos/CSM22/temp2data.php</item>
     </string-array>
+
+    <string-array name="dataTempScaleOptsAndValues">
+        <item>Celsius</item>
+        <item>Fahrenheit</item>
+    </string-array>
+
+    <string name="dataTempScaleDefault">Celsius</string>
+
 </resources>

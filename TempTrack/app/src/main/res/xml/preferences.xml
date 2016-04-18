@@ -19,6 +19,14 @@
             android:summary="Select to restrict network access to only allow WiFi connections."
             android:defaultValue="false"/>
 
+        <ListPreference
+            android:title="Temperature Scale"
+            android:summary="Select the scale for the temperature display."
+            android:key="dataTempScale"
+            android:entries="@array/dataTempScaleOptsAndValues"
+            android:entryValues="@array/dataTempScaleOptsAndValues"
+            android:defaultValue="@string/dataTempScaleDefault" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
