@@ -3,8 +3,6 @@ package uk.ac.aber.clg11.temptrack;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -14,25 +12,24 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.Random;
 
 /**
- * Implementation of App Widget functionality.
+ * Represents the "controller" for the homescreen widget, providing much of the functionality associated with obtaining temperature feed data and updating the user interface.
+ *
+ * @author Connor Goddard (clg11@aber.ac.uk)
+ * @version 1.0
  */
-public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCompleted {
+public class TempTrackWidget extends AppWidgetProvider implements OnUpdateFeedDataCompleted {
 
     public static String REFRESH_BUTTON = "uk.ac.aber.clg11.temptrack.REFRESH_BUTTON";
     public static String SETTINGS_BUTTON = "uk.ac.aber.clg11.temptrack.SETTINGS_BUTTON";
@@ -43,16 +40,18 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
     private static final String TAG = TempTrackWidget.class.getName();
 
+    // CG - Flags for determining the various connection states and permissions for network access.
     private static boolean isWifiConnected = false;
     private static boolean isCellularConnected = false;
-
     private static boolean isCellularAllowed = true;
 
+    // CG - Flag determining the current metric for the temperature display.
     private static boolean isDisplayCelsius = true;
 
+    // CG - Reference to the latest collection of acquired temperature readings.
     private static TemperatureFeedData widgetFeedData = null;
 
-    // The BroadcastReceiver that tracks network connectivity changes.
+    // CG - Internal BroadcastReceiver for tracking network connectivity changes.
     private NetworkReceiver receiver = new NetworkReceiver();
 
     @Override
@@ -64,12 +63,14 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
         // See: http://developer.android.com/guide/topics/ui/settings.html#Defaults for more information.
         PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
 
+        // CG - Always synchronise permissions when starting up the widget, and check network connectivity.
         syncUserPreferences(context);
         updateNetworkStatusFlags(context);
 
-        // There may be multiple widgets active, so update all of them
+        // There may be multiple widgets active, so update all of them.
         for (int appWidgetId : appWidgetIds) {
 
+            // CG - We want to perform data synchronisation for all widgets in turn.
             performDataSync(context, appWidgetId);
 
         }
@@ -78,11 +79,15 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
     @Override
     public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
+
+        // CG - Portions of this code have been modified from an original source: http://developer.android.com/training/basics/network-ops/managing.html
 
         // Registers BroadcastReceiver to track network connection changes.
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+
         receiver = new NetworkReceiver();
+
+        // CG - We need to make sure to register the receiver within the current context.
         context.getApplicationContext().registerReceiver(receiver, filter);
 
     }
@@ -91,6 +96,8 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
 
+        // CG - Make sure to unregister the listener ONLY WHEN the LAST widget is destroyed.
+        // Modified from original source: http://developer.android.com/guide/topics/ui/settings.html#Defaults for more information.
         if (receiver != null) {
             context.getApplicationContext().unregisterReceiver(receiver);
         }
@@ -101,8 +108,7 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Log.d(TAG, intent.getAction());
-
+        // CG - Check if the 'refresh/update' button has been pressed.
         if (REFRESH_BUTTON.equals(intent.getAction())) {
 
             // CG - We use the 'widgetId' to distinguish click events between multiple instances of the same widget.
@@ -111,9 +117,10 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
             int widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
+            // CG - Trigger a background thread to perform feed synchronisation.
             performDataSync(context, widgetId);
 
-
+        // CG - Check if the 'settings' button has been pressed.
         } else if (SETTINGS_BUTTON.equals(intent.getAction())) {
 
             // CG - We use the 'widgetId' to distinguish click events between multiple instances of the same widget.
@@ -122,20 +129,21 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
             int widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
+            // CG - Create a new Intent to display the custom preferences activity.
             Intent settingsIntent = new Intent(context, TempTrackConfigActivity.class);
+
+            // CG - Make sure to pass in the current widget ID, so we can isolate changes.
             settingsIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
             settingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(settingsIntent);
 
+        // CG - Check if a preference has been updated (received from the 'OnSharedPreferenceChangedListener')
         } else if (PREFERENCES_UPDATE.equals(intent.getAction())) {
 
-            Log.d(TAG, "Preferences Updated!!");
+            Log.i(TAG, "Preferences Updated");
 
+            // Update the user preferences with the current widget.
             syncUserPreferences(context);
-
-            Log.d(TAG, String.valueOf(isCellularAllowed));
-            Log.d(TAG, String.valueOf(isCellularConnected));
-            Log.d(TAG, String.valueOf(isWifiConnected));
 
             // CG - We use the 'widgetId' to distinguish click events between multiple instances of the same widget.
             // See: http://stackoverflow.com/a/11716757/4768230 for more information.
@@ -143,12 +151,13 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
             int widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
+            // Update the widget UI (e.g. to change the temperature display from celsius to fahrenheit).
             updateWidgetUI(context, widgetId);
 
+        // CG - Check if a change to network connectivity has occurred (received from 'NetworkReceiver')
         } else if (NETWORK_CHANGE.equals(intent.getAction())) {
 
-            Log.d(TAG, "NETWORK CHANGE WIDGET");
-
+            Log.i(TAG, "Network Connectivity Changed");
             updateNetworkStatusFlags(context);
 
         } else {
@@ -159,36 +168,62 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
     }
 
+
+    /**
+     * Callback function to receive results from background data synchronisation.
+     * @param tempData The temperature feed results.
+     * @param context The current context.
+     * @param widgetId The ID of the current widget.
+     */
     @Override
-    public void onAsyncTaskCompleted(TemperatureFeedData tempData, Context context, int widgetId) {
+    public void OnUpdateFeedDataCompleted(TemperatureFeedData tempData, Context context, int widgetId) {
 
-        Log.d(TAG, tempData.getCurrentTime());
+        Log.i(TAG, tempData.getCurrentTime());
 
-        this.widgetFeedData = tempData;
+        // Update the internal reference to feed results, before updating the widget UI to display the latest values.
+        widgetFeedData = tempData;
         this.updateWidgetUI(context, widgetId);
 
     }
 
-    private void performDataSync(Context context, int appWidgetId) {
+    /**
+     * Determines if network access is available, before triggering a new background download request if possible.
+     * @param context The current context.
+     * @param widgetId The ID of the current widget.
+     */
+    private void performDataSync(Context context, int widgetId) {
 
         // CG - We always force this to be null when we go to do a data sync, so we can tell the user if we couldn't connect.
         widgetFeedData = null;
 
+        /* CG - Here we allow a new background synchronisation task to occur in two cases:
+         *
+         * 1. Cellular access has been granted AND cellular connectivity OR WiFi connectivity is available.
+         * 2. Cellular access has not been granted AND WiFi connectivity (only) is available.
+         */
         if ((isCellularAllowed && (isCellularConnected || isWifiConnected)) || (!isCellularAllowed && isWifiConnected)) {
 
-            new DownloadXmlTask(this, context, appWidgetId).execute(URL);
+            // Fire off the new AsyncTask to download temperature feed data via a background thread.
+            new UpdateFeedDataTask(this, context, widgetId).execute(URL);
 
+        // Otherwise if we can't download new data, we need to display an error message to the user.
         } else {
 
-            Log.d(TAG, "No download, updating UI anyway.");
-            updateWidgetUI(context, appWidgetId);
+            updateWidgetUI(context, widgetId);
 
         }
 
     }
 
+    /**
+     * Obtains network connectivity information from ConnectivityManager before updating internal status flags.
+     * @param context The current context.
+     */
     private void updateNetworkStatusFlags(Context context) {
 
+        // CG - Portions of this code have been modified from an original source: http://developer.android.com/training/basics/network-ops/managing.html
+
+        // CG - Here we use the ConnectivityManager to obtain network status information.
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeInfo = connMgr.getActiveNetworkInfo();
@@ -203,19 +238,28 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
     }
 
+    /**
+     * Synchronises persistent application preferences with internal flags representing each preference.
+     * @param context The current context.
+     */
     private void syncUserPreferences(Context context) {
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
         isCellularAllowed = !(sharedPref.getBoolean("wifiOnly", false));
 
+        // CG - In the case that no feed has been selected (highly unlikely), use a default fallback (set to 'TempData1.xml).
         URL = sharedPref.getString("dataFeed", context.getString(R.string.dataFeedDefault));
 
-        // Force the default temperature scale to be in celsius in the unlikely event that we have no preference at all (including a default).
+        // CG - Force the default temperature scale to be in celsius in the unlikely event that we have no preference at all (including a default).
         isDisplayCelsius = sharedPref.getString("dataTempScale", "celsius").equalsIgnoreCase("celsius");
 
     }
 
+    /**
+     * Formats a temperature value (double) to a string representation (1 decimal place).
+     * @param temperatureValue The raw temperature value.
+     */
     private SpannableStringBuilder formatTempText(double temperatureValue) {
 
         // CG - We force the String value for the temp to be set to one decimal place for display consistency.
@@ -226,6 +270,10 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
     }
 
+    /**
+     * Formats a temperature value (double) to a string representation (1 decimal place).
+     * @param tempValueString The temperature value to format.
+     */
     private SpannableStringBuilder formatTempText(String tempValueString) {
 
         String[] words = tempValueString.split("\\.");
@@ -240,6 +288,8 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
             builder.append("." + words[1] + "\u00B0");
 
+            // CG - We can use 'RelativeSizeSpan' to make the text for part of our string proportionally smaller or larger.
+            // See: http://stackoverflow.com/a/16335416 for more information.
             builder.setSpan(new RelativeSizeSpan(0.5f), start, builder.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             return builder;
@@ -250,13 +300,23 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
 
     }
 
+    /**
+     * Updates all information fields located within the widget user interface.
+     * @param context The current context.
+     * @param widgetId The ID of the current widget.
+     */
     public void updateWidgetUI(Context context, int widgetId) {
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.temp_track_widget);
 
+        // CG - Check if we currently have temperature feed data to display.
         if (widgetFeedData != null) {
 
+            // CG - If so, process/format the data and update the UI accordingly.
+
             double currentTempCelsius = widgetFeedData.getLatestReading().getTemp();
+
+            // CG - As temperature data is in celsius by default, we only need to convert if displaying in fahrenheit.
             double displayTemp = isDisplayCelsius ? currentTempCelsius : convertCelsiusToFahrenheit(currentTempCelsius);
 
             setDataStatus(true, context, widgetId);
@@ -281,11 +341,14 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
                 e.printStackTrace();
             }
 
+        // CG - Otherwise, display an error message to the user.
         } else {
 
             setDataStatus(false, context, widgetId);
 
         }
+
+        // CG - Set up the intents for the 'refresh/update' and 'settings' buttons.
 
         Intent intent = new Intent(REFRESH_BUTTON);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
@@ -298,12 +361,18 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
         pendingIntent = PendingIntent.getBroadcast(context, widgetId, intent, 0);
         views.setOnClickPendingIntent(R.id.btnSettings, pendingIntent);
 
+        // Perform the UI update for the widget.
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
-
         manager.updateAppWidget(widgetId, views);
 
     }
 
+    /**
+     * Determines whether or not to show or hide temperature information, with an error message shown/hidden in the opposite case.
+     * @param isActive Specifies whether to show (true) or to hide (false) temperature information.
+     * @param context The current context.
+     * @param widgetId The ID of the current widget.
+     */
     private void setDataStatus(boolean isActive, Context context, int widgetId) {
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.temp_track_widget);
@@ -330,6 +399,10 @@ public class TempTrackWidget extends AppWidgetProvider implements OnAsyncTaskCom
         manager.updateAppWidget(widgetId, views);
     }
 
+    /**
+     * Converts temperature readings from celsius and fahrenheit measures (celsius is default)
+     * @param celsius The temperature value in celsius to be converted.
+     */
     private double convertCelsiusToFahrenheit(double celsius) {
         return (9.0/5.0) * celsius + 32;
     }

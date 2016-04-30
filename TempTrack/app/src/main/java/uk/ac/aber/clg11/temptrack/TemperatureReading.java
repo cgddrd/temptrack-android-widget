@@ -6,7 +6,10 @@ import android.util.Log;
 import java.util.Locale;
 
 /**
- * Created by connorgoddard on 15/04/2016.
+ * Model class representing an individual temperature reading.
+ *
+ * @author Connor Goddard (clg11@aber.ac.uk)
+ * @version 1.0
  */
 public class TemperatureReading {
 
@@ -64,6 +67,10 @@ public class TemperatureReading {
         return temp;
     }
 
+    /**
+     * Converts a temperature value (double) to String representation.
+     * @return The String representation of a temperature value.
+     */
     public String getTempStringValue() {
 
         // CG - We force the String value for the temp to be set to one decimal place for display consistency.

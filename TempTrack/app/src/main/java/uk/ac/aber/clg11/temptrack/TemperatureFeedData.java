@@ -3,7 +3,10 @@ package uk.ac.aber.clg11.temptrack;
 import java.util.ArrayList;
 
 /**
- * Created by connorgoddard on 15/04/2016.
+ * Model class representing a collection of temperature readings.
+ *
+ * @author Connor Goddard (clg11@aber.ac.uk)
+ * @version 1.0
  */
 public class TemperatureFeedData {
 
@@ -32,6 +35,7 @@ public class TemperatureFeedData {
 
         this.currentTime = currentTime;
 
+        // CG - Parse the current time.
         String[] timeVals = currentTime.split(":");
 
         currentTimeHour = Integer.parseInt(timeVals[0]);
@@ -49,6 +53,10 @@ public class TemperatureFeedData {
 
     }
 
+    /**
+     * Returns the latest temperature reading (i.e. the last reading in the feed collection).
+     * @return The latest TemperatureReading instance.
+     */
     public TemperatureReading getLatestReading() {
 
         // CG - Return the temperature value from the last reading parsed from the XML feed.
@@ -56,6 +64,10 @@ public class TemperatureFeedData {
 
     }
 
+    /**
+     * Returns the maximum temperature value from the collection of readings.
+     * @return The maximum temperature value.
+     */
     public double getMaxTemperature() {
 
         double max = Double.MIN_VALUE;
@@ -72,6 +84,10 @@ public class TemperatureFeedData {
         return max;
     }
 
+    /**
+     * Returns the minumum temperature value from the collection of readings.
+     * @return The minimum temperature value.
+     */
     public double getMinTemperature() {
 
         double min = Double.MAX_VALUE;
@@ -88,6 +104,11 @@ public class TemperatureFeedData {
         return min;
     }
 
+    /**
+     * Returns a collection of TemperatureReading instances recorded over the specified hour.
+     * @param targetHour The hour (24-hr clock) to retrieve temperature readings for.
+     * @return A collection of TemperatureReading instances for the specified hour.
+     */
     private ArrayList<TemperatureReading> getHourlyTemperatures(int targetHour) {
 
         ArrayList<TemperatureReading> hourlyTemperatures = new ArrayList<>();
@@ -106,6 +127,11 @@ public class TemperatureFeedData {
 
     }
 
+    /**
+     * Sums over the specified collection of temperature values.
+     * @param temperatureReadings The collection of temperature readings to sum together.
+     * @return The summed total of temperature values.
+     */
     private double sumHourlyTemperatures(ArrayList<TemperatureReading> temperatureReadings) {
 
         double hourlyTempSum = 0.0;
@@ -120,8 +146,13 @@ public class TemperatureFeedData {
 
     }
 
+    /**
+     * Calculates the average temperature value for the current hour.
+     * @return Average temperature value for the current hour.
+     */
     public double getHourlyAverageTemperature() {
 
+        // CG - If we have readings < 5 mins into the current hour, we want to use the previous hour's readings.
         int targetHour = (currentTimeMin >= 5) ? currentTimeHour : currentTimeHour--;
 
         if (targetHour < 0) {

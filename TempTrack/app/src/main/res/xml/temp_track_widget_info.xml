@@ -4,7 +4,7 @@
     android:initialLayout="@layout/temp_track_widget"
     android:minHeight="110dp"
     android:minWidth="250dp"
-    android:previewImage="@drawable/example_appwidget_preview"
+    android:previewImage="@drawable/TempTrack_ori_portrait"
     android:resizeMode="none"
-    android:updatePeriodMillis="86400000"
+    android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen"></appwidget-provider>

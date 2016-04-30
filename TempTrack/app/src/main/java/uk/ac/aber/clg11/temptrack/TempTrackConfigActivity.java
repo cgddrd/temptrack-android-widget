@@ -8,6 +8,14 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+/**
+ * Represents the activity for displaying and managing widget preferences.
+ *
+ * Based on code provided in a tutorial available at: http://developer.android.com/guide/topics/ui/settings.html
+ *
+ * @author Connor Goddard (clg11@aber.ac.uk)
+ * @version 1.0
+ */
 public class TempTrackConfigActivity extends PreferenceActivity {
 
     @Override
@@ -15,24 +23,10 @@ public class TempTrackConfigActivity extends PreferenceActivity {
 
         super.onCreate(savedInstanceState);
 
-        //setContentView(R.layout.activity_temp_track_config);
-
         // Display the fragment as the main content.
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new TempTrackConfigFragment())
-                .commit();
-
-//        // Array of choices
-//        String colors[] = {"Red","Blue","White","Yellow","Black", "Green","Purple","Orange","Grey"};
-//
-//        // Selection of the spinner
-//        Spinner spinner = (Spinner) findViewById(R.id.spinFeed);
-//
-//        // Application of the Array to the Spinner
-//        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, colors);
-//        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-//        spinner.setAdapter(spinnerArrayAdapter);
-
+                            .replace(android.R.id.content, new TempTrackConfigFragment())
+                            .commit();
 
     }
 
